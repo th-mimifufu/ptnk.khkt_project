@@ -38,3 +38,17 @@
   - Ví dụ usage (curl / HTTP client)
   - Cách build docker
 
+
+  -----
+
+  Data L1:
+
+  - [ ] New df:  ma_to_hop_mon (A01),to_hop_mon (x,y,z), ma_truong, ma_nganh
+  - [ ] Trong data L1 có nhiều trường-ngành đang bị tuyển thẳng tất cả các môn học sinh giỏi QG? Nên xét theo tổ hợp môn.
+
+
+  -----
+
+  Model L2:
+
+  - [ ] Optimise model
