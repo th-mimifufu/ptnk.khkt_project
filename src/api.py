@@ -1,24 +1,10 @@
 from fastapi import FastAPI
 from typing import List
-from predict import l2_predict_from_input
-from schemas import UserInputL2, L2PredictResult
+from predict import l1_predict_from_input, l2_predict_from_input
+from schemas import UserInputL2, L2PredictResult, L1PredictResult, UserInputL1
 
 app = FastAPI(title="Demo API ML",
               description="API nhập profile học sinh và trả về mã xét tuyển phù hợp nhất.")
-
-
-# @app.post("/predict/l1", response_model=List[PredictResult], tags=["Gợi ý xét tuyển"])
-# def predict_major(user: UserInputL2):
-#     """
-#     API gợi ý mã xét tuyển L1 (ngành/trường/phương thức) phù hợp nhất với profile học sinh TUYỂN THẲNG.
-#     (Demo docs)
-#     """
-#     demo_results = [
-#         PredictResult(ma_xet_tuyen="QSA7140201ĐGNL", score=0.89),
-#         PredictResult(ma_xet_tuyen="QSA7140202ĐGNL", score=0.76),
-#         PredictResult(ma_xet_tuyen="QSA7140205ĐGNL", score=0.61),
-#     ]
-#     return demo_results
 
 @app.get("/health", tags=["Health"])
 def health_check():
@@ -27,11 +13,20 @@ def health_check():
     """
     return {"status": "healthy"}
 
+@app.post("/predict/l1", response_model=List[L1PredictResult], tags=["Gợi ý xét tuyển"])
+def predict_majorL1(user: UserInputL1):
+    """
+    API gợi ý mã xét tuyển L1 (ngành/trường/phương thức) phù hợp nhất với profile học sinh TUYỂN THẲNG.
+    
+    """
+    results = l1_predict_from_input(user)
+    return results
+
 @app.post("/predict/l2", response_model=List[L2PredictResult], tags=["Gợi ý xét tuyển"])
-def predict_major(user: UserInputL2):
+def predict_majorL2(user: UserInputL2):
     """
     API gợi ý mã xét tuyển L2 (ngành/trường/phương thức) phù hợp nhất với profile học sinh TPHT, ĐGNL, CCQT, VSAT, (HOCBA).
-    (Demo docs)
+    
     """
     results = l2_predict_from_input(user, threshold=0.5)
     return results
