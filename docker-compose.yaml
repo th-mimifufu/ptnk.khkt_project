@@ -1,8 +1,7 @@
 services:
-  ml:
-    build: .
-    container_name: khkt_ml
+  l2_api:
+    image: khanhlinh02/l2-service:1.0.0
+    container_name: l2_api
     ports:
       - "8000:8000"
-    volumes:
-      - ./src:/app
+    restart: unless-stopped
