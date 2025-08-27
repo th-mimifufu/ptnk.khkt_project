@@ -11,7 +11,7 @@
 ---
 
 ## 3. Model Training
-- [ ] Train ML model
+- [x] Train ML model
 - [ ] Evaluate model (accuracy, precision, recall, F1-score)
 - [ ] Lưu model (`.pkl`, `.joblib`, `.h5`)
 
@@ -38,3 +38,8 @@
   - Ví dụ usage (curl / HTTP client)
   - Cách build docker
 
+---------
+Fix: 
+- [ ] Sửa lại học lực: 1: tốt, 2: khá, 3: đạt, 4: chưa đạt.
+- [ ] Sửa lại hạnh kiểm: 1: tốt, 2: khá, 3: đạt, 4: chưa đạt.
+- [ ] Rmit -> hb_12 -> 1

@@ -1,6 +1,6 @@
 services:
   ml_api:
-    image: khanhlinh02/ml-service:1.0.1
+    image: khanhlinh02/ml-service:1.0.2
     container_name: ml_api
     ports:
       - "8000:8000"
