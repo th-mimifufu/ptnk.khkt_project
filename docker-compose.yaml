@@ -5,3 +5,16 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+    networks:
+      - shared-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  shared-network:
+    name: app-shared-network
+    driver: bridge
