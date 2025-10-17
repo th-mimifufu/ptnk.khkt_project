@@ -6,46 +6,42 @@ import polars as pl
 
 from src.services.l2.schema import UserInputL2
 from src.core.config import settings
+from src.services.l2.repository import filter_L2_requirements
 
-def preprocess_input_data_L2(data: UserInputL2) -> pd.DataFrame:
-    df = pd.DataFrame([data.model_dump()])
-    l2_uni = pd.read_excel(os.path.join(settings.DATA_DIR, "L2_uni_requirement.xlsx")).astype(str)
-    l2_uni = pl.from_pandas(l2_uni).with_columns([
-        pl.col("cong_lap").cast(pl.Int64),
-        pl.col("tinh_tp").cast(pl.Utf8),
-        pl.col("to_hop_mon").cast(pl.Utf8),
-        pl.col("diem_chuan").cast(pl.Float64),
-        pl.col("hoc_phi").cast(pl.Int64),
-        pl.col("ten_ccta").cast(pl.Utf8),
-        pl.col("diem_ccta").cast(pl.Utf8),
-        pl.col("diem_quy_doi").cast(pl.Float64),
-        pl.col("hk10").cast(pl.Int64),
-        pl.col("hk11").cast(pl.Int64),
-        pl.col("hk12").cast(pl.Int64),
-        pl.col("hl10").cast(pl.Int64),
-        pl.col("hl11").cast(pl.Int64),
-        pl.col("hl12").cast(pl.Float64),
-        pl.col("nhom_nganh").cast(pl.Int64),
-        pl.col("ma_xet_tuyen").cast(pl.Utf8)
-    ])
-    test_df = input_to_pairs_L2(pl.from_pandas(df), l2_uni)
-    return test_df
+# def preprocess_input_data_L2(data: UserInputL2) -> pd.DataFrame:
+#     df = pd.DataFrame([data.model_dump()])
+#     l2_uni = query_from_db("SELECT * FROM l2_uni_requirement")
+#     l2_uni = pl.from_pandas(l2_uni).with_columns([
+#         pl.col("cong_lap").cast(pl.Int64),
+#         pl.col("tinh_tp").cast(pl.Utf8),
+#         pl.col("to_hop_mon").cast(pl.Utf8),
+#         pl.col("diem_chuan").cast(pl.Float64),
+#         pl.col("hoc_phi").cast(pl.Int64),
+#         pl.col("ten_ccta").cast(pl.Utf8),
+#         pl.col("diem_ccta").cast(pl.Utf8),
+#         pl.col("diem_quy_doi").cast(pl.Float64),
+#         pl.col("hk10").cast(pl.Int64),
+#         pl.col("hk11").cast(pl.Int64),
+#         pl.col("hk12").cast(pl.Int64),
+#         pl.col("hl10").cast(pl.Int64),
+#         pl.col("hl11").cast(pl.Int64),
+#         pl.col("hl12").cast(pl.Float64),
+#         pl.col("nhom_nganh").cast(pl.Int64),
+#         pl.col("ma_xet_tuyen").cast(pl.Utf8)
+#     ])
+#     test_df = input_to_pairs_L2(pl.from_pandas(df), l2_uni)
+#     return test_df
 
-def input_to_pairs_L2(input_data: pl.DataFrame, candidate_list: pl.DataFrame) -> pd.DataFrame:
+def input_to_pairs_L2(input_data: pl.DataFrame) -> pd.DataFrame:
     cand_tp = input_data['tinh_tp'].unique().to_list()
     cand_thm = input_data['to_hop_mon'].unique().to_list()
     cand_cl = input_data['cong_lap'].unique().to_list()
     cand_nn = input_data['nhom_nganh'].unique().to_list()
-    candidate_uni_pl = candidate_list.filter(
-        pl.col('tinh_tp').is_in(cand_tp) &
-        pl.col('to_hop_mon').is_in(cand_thm) &
-        pl.col('cong_lap').is_in(cand_cl) &
-        pl.col('nhom_nganh').is_in(cand_nn)
-    ).clone()
+
+    candidate_uni = filter_L2_requirements(cand_tp, cand_thm, cand_cl, cand_nn)
 
     student_info_pd = input_data.to_pandas()
-    candidate_uni_pd = candidate_uni_pl.to_pandas()
-    return filter_candidates_per_student_L2(student_info_pd, candidate_uni_pd)
+    return filter_candidates_per_student_L2(student_info_pd, candidate_uni)
 
 def filter_candidates_per_student_L2(
     student_df: pd.DataFrame,

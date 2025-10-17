@@ -8,7 +8,7 @@ import re
 from typing import List, Iterable
 
 from src.services.l2.schema import UserInputL2, L2PredictResult
-from src.services.l2.preprocess import preprocess_input_data_L2
+from src.services.l2.preprocess import input_to_pairs_L2
 
 @dataclass
 class L2Predictor:
@@ -50,7 +50,7 @@ class L2Predictor:
         return df.reindex(columns=self.feature_names)
 
     def predict(self, user: UserInputL2) -> list[L2PredictResult]:
-        processed = preprocess_input_data_L2(user)
+        processed = input_to_pairs_L2(user)
         if isinstance(processed, pd.DataFrame) and processed.empty: return []
         X = self._prep_df_for_predict(processed)
         if X.shape[0] == 0: return []
