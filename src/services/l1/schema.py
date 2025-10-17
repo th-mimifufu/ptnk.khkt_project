@@ -10,9 +10,9 @@ class UserInputL1(BaseModel):
     tinh_tp: str = Field(..., description="Tỉnh/Thành phố (vd: TP. Hồ Chí Minh, ...)")
     hoc_phi: float = Field(..., ge=0, description="Mức học phí dự kiến (VNĐ/năm)")
 
-    hsg_1: _HSG_Field = Field(None, description="Giải nhất HSG quốc gia (vd: Toán, Văn, Anh, ...)")
-    hsg_2: _HSG_Field = Field(None, description="Giải nhì HSG quốc gia (vd: Toán, Văn, Anh, ...)")
-    hsg_3: _HSG_Field = Field(None, description="Giải ba HSG quốc gia (vd: Toán, Văn, Anh, ...)")
+    hsg_1: _HSG_Field = Field(..., description="Giải nhất HSG quốc gia (vd: Toán, Văn, Anh, ...)")
+    hsg_2: _HSG_Field = Field(..., description="Giải nhì HSG quốc gia (vd: Toán, Văn, Anh, ...)")
+    hsg_3: _HSG_Field = Field(..., description="Giải ba HSG quốc gia (vd: Toán, Văn, Anh, ...)")
 
     ahld: int = Field(0, ge=0, le=1, description="Anh hùng LLVT (1: Có, 0: Không)")
     dan_toc_thieu_so: int = Field(0, ge=0, le=1, description="Dân tộc thiểu số (1/0)")

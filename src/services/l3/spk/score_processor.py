@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import Any
 
-from src.services.l3.schema import UserInputL3
+from src.services.l3.spk.schema import UserInputL3
 
 from .filters import filter_schools
 from src.services.l3.spk.filters import get_to_hop_mon_from_db
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     
     df_schools = pd.read_excel("data/hocba_l3.xlsx")
     
-    from src.services.l3.schema import HocBa, Grade, AwardQG, AwardEnglish, UserInputL3
+    from src.services.l3.spk.schema import HocBa, Grade, AwardQG, AwardEnglish, UserInputL3
     
     hoc_ba = HocBa(
         grade_10=Grade(toan=9.0, ly=8.5, hoa=8.0, van=7.5, anh=9.0),
@@ -84,4 +84,4 @@ if __name__ == "__main__":
     )
     
     result_df = process_admission_calculation(user_input, df_schools)
-    print(result_df.head(10))
+    print("RESULT: \n", result_df.head(10))

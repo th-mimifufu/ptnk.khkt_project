@@ -87,9 +87,9 @@ class L1Predictor:
                     results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={cls_list[0]: 1.0}))
                 else:
                     results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
-                    continue
+                continue
 
-            feat_in = list(enc.feature_names_in_) if hasattr(enc, 'feature_names_in_') and enc.feature_names_in_ is not None else ohe_cols
+            feat_in = list(enc.feature_names_in_) if hasattr(enc, 'feature_names_in_') and enc.feature_names_in_ is not None else self.ohe_cols
 
             x_df = r[feat_in].astype(str).to_frame().T
             X = enc.transform(x_df) if enc is not None else x_df

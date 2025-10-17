@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     MODEL_DIR: Path
     DATA_DIR: Path 
     L2_THRESHOLD: float = 0.5
+    OCR_MISTRAL: str = ""
 
     # batch
     MAX_BATCH_CONCURRENCY: int = max(1, (os.cpu_count() or 4))

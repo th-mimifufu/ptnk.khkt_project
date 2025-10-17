@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import List, Literal, Optional, Set, ClassVar, Union
 
-from src.services.constants import TinhTP, NhomNganh
+from src.services.constants import TinhTP, NhomNganh, ToHopMon
 
 class Grade(BaseModel):
     toan: Optional[float] = Field(..., ge=0, le=10)
@@ -29,6 +29,15 @@ class AwardQG(BaseModel):
 class AwardEnglish(BaseModel):
     level: str = Field(..., pattern="^(A1|A2|B1|B2|C1|C2)$")
 
+class InterCer(BaseModel):
+    name: str = Field(..., description="Tên chứng chỉ (SAT, IB, ...)")
+    score: float = Field(..., description="Điểm số chứng chỉ")
+
+class DGNL(BaseModel):
+    language_score: int = Field(..., ge=0, le=60,description="Điểm phần sử dụng ngôn ngữ)")
+    math_score: int = Field(..., ge=0, le=30, description="Điểm phần toán học")
+    science_logic: int = Field(..., ge=0, le=30, description="Điểm phần tư duy khoa học")
+
 class UserInputL3(BaseModel):
     cong_lap: int = Field(..., ge=0, le=1, description="1: Công lập, 0: Tư thục")
     tinh_tp: str = Field(..., description="Tỉnh/Thành phố (vd: TP. Hồ Chí Minh, ...)")
@@ -36,6 +45,9 @@ class UserInputL3(BaseModel):
     hoc_ba: HocBa = Field(..., description="Điểm học bạ lớp 10, 11, 12")
     award_qg: Optional[AwardQG] = None
     award_english: Optional[AwardEnglish] = None
+    int_cer: Optional[InterCer] = Field(None, description="Chứng chỉ quốc tế (vd: SAT, IB, ...)")
+    dgnl: Optional[DGNL] = Field(None, description="Điểm đánh giá năng lực (nếu có)")
+    thpt: Optional[float] = Field(None, description="Điểm thi tốt nghiệp THPT (nếu có)")
     nhom_nganh: NhomNganh = Field(..., description="Nhóm ngành (vd: 714, 732, ...)")
 
     _VALID_TINH_TP: ClassVar[Set[str]] = {e.value for e in TinhTP}

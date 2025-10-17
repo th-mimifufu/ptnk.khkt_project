@@ -15,7 +15,7 @@ COPY models/ ./models/
 COPY src/ ./src/ 
 COPY data/L2_uni_requirement.xlsx ./data/
 
-ENV PYTHONPATH=/app/src:/app
+ENV PYTHONPATH=/app
 
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

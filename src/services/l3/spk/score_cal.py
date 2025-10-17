@@ -1,6 +1,6 @@
 from typing import List, Tuple, Any
-from src.services.l3.spk.constants import SUBJECT_MAP, AWARD_QG_POINTS, AWARD_ENGLISH_POINTS
-from src.services.l3.schema import HocBa
+from src.services.l3.bk.constants import SUBJECT_MAP, AWARD_QG_POINTS, AWARD_ENGLISH_POINTS
+from src.services.l3.spk.schema import HocBa
 import pandas as pd
 
 def get_dtbm(hoc_ba: HocBa, subject: str) -> float:
@@ -27,7 +27,7 @@ def get_dtbm(hoc_ba: HocBa, subject: str) -> float:
 def calculate_to_hop_score(hoc_ba: Any, to_hop: List[str]) -> float:
     """
     Tính điểm cho một tổ hợp môn
-    Công thức: (môn_đầu_tiên*2 + môn_thứ_hai + môn_thứ_ba) / 4
+    Công thức: (môn_đầu_tiên*2 + môn_thứ_hai + môn_thứ_ba)*3 / 4
     
     Args:
         hoc_ba: HocBa object
