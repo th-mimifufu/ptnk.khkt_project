@@ -5,6 +5,7 @@ Base = declarative_base()
 
 class L2UniRequirement(Base):
     __tablename__ = "l2_uni_requirement"
+    __table_args__ = {'schema': 'machine_learning'}
     id = Column(Integer, primary_key=True, autoincrement=True)
     uni_type_label = Column(Integer)
     province = Column(String)

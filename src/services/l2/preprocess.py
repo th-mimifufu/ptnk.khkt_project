@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import polars as pl
 
+from src.core.database import SessionLocal
 from src.services.l2.schema import UserInputL2
 from src.core.config import settings
 from src.services.l2.repository import filter_L2_requirements
@@ -32,15 +33,22 @@ from src.services.l2.repository import filter_L2_requirements
 #     test_df = input_to_pairs_L2(pl.from_pandas(df), l2_uni)
 #     return test_df
 
-def input_to_pairs_L2(input_data: pl.DataFrame) -> pd.DataFrame:
+def input_to_pairs_L2(input: UserInputL2) -> pd.DataFrame:
+    input_data = pl.DataFrame([input.model_dump()])
+    
     cand_tp = input_data['tinh_tp'].unique().to_list()
     cand_thm = input_data['to_hop_mon'].unique().to_list()
     cand_cl = input_data['cong_lap'].unique().to_list()
     cand_nn = input_data['nhom_nganh'].unique().to_list()
+    db = SessionLocal()
 
-    candidate_uni = filter_L2_requirements(cand_tp, cand_thm, cand_cl, cand_nn)
+    try:
+        candidate_uni = filter_L2_requirements(db, cand_tp, cand_thm, cand_cl, cand_nn)
+    finally:
+        db.close()
 
     student_info_pd = input_data.to_pandas()
+    candidate_uni = candidate_uni.rename(columns={"uni_type_label": "cong_lap", "province": "tinh_tp", "subject_combination": "to_hop_mon", "major_code": "nhom_nganh", "score": "diem_chuan", "tuition_fee": "hoc_phi", "certification_name": "ten_ccta", "certification_score": "diem_ccta", "certification_score_equivalence": "diem_quy_doi", "conduct_grade_10": "hk10", "conduct_grade_11": "hk11", "conduct_grade_12": "hk12", "academic_performance_grade_10": "hl10", "academic_performance_grade_11": "hl11", "academic_performance_grade_12": "hl12", "admission_code": "ma_xet_tuyen", "diem_chuan_final": "score_final", "y_base": "y_base", "is_base_row": "is_base_row"})
     return filter_candidates_per_student_L2(student_info_pd, candidate_uni)
 
 def filter_candidates_per_student_L2(
@@ -68,7 +76,7 @@ def filter_candidates_per_student_L2(
             cand[f'student_{k}'] = s.get(k, pd.NA)
 
         cand['cand_diem_chuan_final'] = pd.to_numeric(cand.get('diem_chuan_final'), errors='coerce')
-        cand['cand_hoc_phi'] = pd.to_numeric(cand.get('hoc_phi'), errors='coerce').fillna(0).astype('int64')
+        cand['cand_hoc_phi'] = pd.to_numeric(cand['hoc_phi'], errors='coerce').fillna(0).astype('int64')
 
         if 'y_base' in cand.columns:
             cand['cand_y_base'] = pd.to_numeric(cand['y_base'], errors='coerce')

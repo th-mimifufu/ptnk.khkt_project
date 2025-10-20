@@ -14,3 +14,4 @@ beautifulsoup4==4.13.5
 lxml==6.0.1
 mistralai==1.9.10
 SQLAlchemy==2.0.44
+psycopg2-binary

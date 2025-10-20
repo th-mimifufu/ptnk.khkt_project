@@ -12,4 +12,4 @@ def filter_L2_requirements(db: Session, cand_tp, cand_thm, cand_cl, cand_nn)  ->
         .filter(L2UniRequirement.subject_combination.in_(cand_thm))
         .filter(L2UniRequirement.uni_type_label.in_(cand_cl))
     )
-    return pd.DataFrame(query.all())
+    return pd.read_sql(query.statement, db.bind)
