@@ -48,3 +48,6 @@ frontend/.turbo/              # Nếu dùng TurboRepo
 
 data/
 notebook/
+
+.env
+!.env.example
