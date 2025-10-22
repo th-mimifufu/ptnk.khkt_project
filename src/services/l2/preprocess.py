@@ -40,6 +40,7 @@ def input_to_pairs_L2(input: UserInputL2) -> pd.DataFrame:
     cand_thm = input_data['to_hop_mon'].unique().to_list()
     cand_cl = input_data['cong_lap'].unique().to_list()
     cand_nn = input_data['nhom_nganh'].unique().to_list()
+    
     db = SessionLocal()
 
     try:

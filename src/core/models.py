@@ -26,3 +26,23 @@ class L2UniRequirement(Base):
     y_base = Column(Float)
     score_final = Column(Float)
     is_base_row = Column(Boolean)
+
+class Admission(Base):
+    __tablename__ = "admissions"
+    __table_args__ = {'schema': 'uni_guide'}
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    major_code = Column(Integer)
+    admission_code = Column(String)
+    admission_type = Column(String)
+    admission_type_name = Column(String)
+    createdAt = Column(String)
+    major_name = Column(String)
+    province = Column(String)
+    study_program = Column(String)
+    subject_combination = Column(String)
+    tuition_fee = Column(Integer)
+    uni_code = Column(String)
+    uni_name = Column(String)
+    uni_type = Column(Integer)
+    uni_web_link = Column(String)
+    updatedAt = Column(String)

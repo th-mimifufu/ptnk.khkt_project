@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 from typing import Dict, Any, List, Tuple
 
+from src.core.database import SessionLocal
+from src.services.l1.repository import get_major_code_satisfied_tuition_fee
 from src.services.l1.schema import UserInputL1, L1PredictResult
 from src.services.l1.preprocess import preprocess_input_data_L1
 
@@ -58,7 +60,66 @@ class L1Predictor:
             return "50 huyện nghèo/TNB"
         return "Không ưu tiên"
     
-    def predict(self, user: UserInputL1) -> List[L1PredictResult]:
+    # def predict(self, user: UserInputL1) -> List[L1PredictResult]:
+    #     processed_data = preprocess_input_data_L1(user).reset_index(drop=True)
+    #     if processed_data.empty:
+    #         return [L1PredictResult(loai_uu_tien="Không ưu tiên", ma_xet_tuyen={})]
+
+    #     processed_data = processed_data.assign(row_id=lambda d: d.index)
+    #     results: List[L1PredictResult] = []
+
+    #     for _, r in processed_data.iterrows():
+    #         gkey = tuple(r[c] for c in self.group_cols)
+    #         loai = self.infer_loai_uu_tien(r)
+    #         if loai == "Không ưu tiên":
+    #             results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
+    #             continue
+
+    #         if gkey not in self.models:
+    #             results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
+    #             continue
+
+    #         clf = self.models[gkey]
+    #         enc = self.encoders.get(gkey)
+    #         le = self.label_encoders.get(gkey)
+    #         cls_list = self.class_lists.get(gkey, [])
+
+    #         if clf is None:
+    #             if cls_list:
+    #                 results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={cls_list[0]: 1.0}))
+    #             else:
+    #                 results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
+    #             continue
+
+    #         feat_in = list(enc.feature_names_in_) if hasattr(enc, 'feature_names_in_') and enc.feature_names_in_ is not None else self.ohe_cols
+
+    #         x_df = r[feat_in].astype(str).to_frame().T
+    #         X = enc.transform(x_df) if enc is not None else x_df
+
+    #         if hasattr(clf, 'predict_proba'):
+    #             p = clf.predict_proba(X)[0]
+    #             s = float(p.sum())
+    #             if s <= 0:
+    #                 results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
+    #                 continue
+    #             order = np.argsort(p)[::-1]
+    #             labels_sorted = le.classes_[order] if le is not None else np.array(cls_list)[order]
+    #             probs_sorted = (p[order] / s).astype(float)
+    #             out_map = {str(lab): float(pr) for lab, pr in zip(labels_sorted, probs_sorted)}
+    #             results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen=out_map))
+    #         else:
+    #             yhat = clf.predict(X)[0]
+    #             pred = le.inverse_transform([yhat])[0] if le is not None else (cls_list[int(yhat)] if cls_list else None)
+    #             results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen=({str(pred): 1.0} if pred is not None else {})))
+    #     return results
+
+    def predict(
+        self, user: UserInputL1
+    ) -> List[L1PredictResult]:
+        """
+        Dự đoán và lọc danh sách mã xét tuyển sao cho học phí <= user_budget.
+        """
+        print(1)
         processed_data = preprocess_input_data_L1(user).reset_index(drop=True)
         if processed_data.empty:
             return [L1PredictResult(loai_uu_tien="Không ưu tiên", ma_xet_tuyen={})]
@@ -69,11 +130,8 @@ class L1Predictor:
         for _, r in processed_data.iterrows():
             gkey = tuple(r[c] for c in self.group_cols)
             loai = self.infer_loai_uu_tien(r)
-            if loai == "Không ưu tiên":
-                results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
-                continue
 
-            if gkey not in self.models:
+            if loai == "Không ưu tiên" or gkey not in self.models:
                 results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
                 continue
 
@@ -83,30 +141,57 @@ class L1Predictor:
             cls_list = self.class_lists.get(gkey, [])
 
             if clf is None:
-                if cls_list:
-                    results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={cls_list[0]: 1.0}))
-                else:
-                    results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
+                out_map = {cls_list[0]: 1.0} if cls_list else {}
+                results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen=out_map))
+                print(4)
                 continue
 
-            feat_in = list(enc.feature_names_in_) if hasattr(enc, 'feature_names_in_') and enc.feature_names_in_ is not None else self.ohe_cols
+            feat_in = (
+                list(enc.feature_names_in_)
+                if hasattr(enc, "feature_names_in_") and enc.feature_names_in_ is not None
+                else self.ohe_cols
+            )
 
             x_df = r[feat_in].astype(str).to_frame().T
             X = enc.transform(x_df) if enc is not None else x_df
 
-            if hasattr(clf, 'predict_proba'):
+            if hasattr(clf, "predict_proba"):
                 p = clf.predict_proba(X)[0]
                 s = float(p.sum())
                 if s <= 0:
                     results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen={}))
                     continue
                 order = np.argsort(p)[::-1]
-                labels_sorted = le.classes_[order] if le is not None else np.array(cls_list)[order]
+                labels_sorted = (
+                    le.classes_[order] if le is not None else np.array(cls_list)[order]
+                )
                 probs_sorted = (p[order] / s).astype(float)
-                out_map = {str(lab): float(pr) for lab, pr in zip(labels_sorted, probs_sorted)}
-                results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen=out_map))
+                out_map = {
+                    str(lab): float(pr) for lab, pr in zip(labels_sorted, probs_sorted)
+                }
+                print(2)
             else:
                 yhat = clf.predict(X)[0]
-                pred = le.inverse_transform([yhat])[0] if le is not None else (cls_list[int(yhat)] if cls_list else None)
-                results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen=({str(pred): 1.0} if pred is not None else {})))
+                pred = (
+                    le.inverse_transform([yhat])[0]
+                    if le is not None
+                    else (cls_list[int(yhat)] if cls_list else None)
+                )
+                out_map = {str(pred): 1.0} if pred is not None else {}
+                print(3)
+            db = SessionLocal()
+            # Lọc học phí tại đây
+            try: 
+                if out_map:
+                    valid_codes = list(out_map.keys())
+                    df_valid = get_major_code_satisfied_tuition_fee(
+                        db, valid_codes, user.hoc_phi
+                    )
+                    print(df_valid)
+                    allowed_codes = set(df_valid["admission_code"].tolist())
+                    out_map = {k: v for k, v in out_map.items() if k in allowed_codes}
+            finally:
+                db.close()
+            results.append(L1PredictResult(loai_uu_tien=loai, ma_xet_tuyen=out_map))
+
         return results
