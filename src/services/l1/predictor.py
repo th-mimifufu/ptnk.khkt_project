@@ -31,7 +31,7 @@ class L1Predictor:
             label_encoders = joblib.load(root / "label_encoders.pkl")
             class_lists = joblib.load(root / "class_lists.pkl")
         except Exception:
-            bundle = joblib.load(root / "l1_model.joblib")
+            bundle = joblib.load(root / "l1_model_group_wise.joblib")
             models = bundle["models"]
             encoders = bundle["encoders"]
             label_encoders = bundle["label_encoders"]
@@ -40,7 +40,7 @@ class L1Predictor:
         try:
             group_cols = json.loads((root / "group_cols.json").read_text(encoding="utf-8"))
         except Exception:
-            group_cols = ["cong_lap", "tinh_tp", "nhom_nganh"]
+            group_cols = ["tinh_tp", "nhom_nganh"]
         try:
             ohe_cols = json.loads((root / "ohe_cols.json").read_text(encoding="utf-8"))
         except Exception:
