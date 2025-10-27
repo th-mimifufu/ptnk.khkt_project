@@ -1,28 +1,27 @@
 import pandas as pd
-from typing import Any
 
-from src.services.l3.spk.schema import UserInputL3
+from src.services.l3.repository import get_subject_combination
+from src.services.l3.schemas import UserInputL3
+from src.services.l3.schemas import HocBa, Grade, AwardQG, AwardEnglish, UserInputL3
 
-from .filters import filter_schools
-from src.services.l3.spk.filters import get_to_hop_mon_from_db
 from src.services.l3.spk.score_cal import calculate_best_to_hop_score, calculate_bonus, parse_to_hop_from_dataframe
 
-def process_admission_calculation(user_input: UserInputL3, df_schools: pd.DataFrame) -> pd.DataFrame:
-    # Bước 1: Lọc trường theo điều kiện
-    filtered_schools = filter_schools(df_schools, user_input)
-    print(filtered_schools)
-    if filtered_schools.empty:
-        return pd.DataFrame()
+def process_admission_calculation(db, user_input: UserInputL3, df_schools: pd.DataFrame, uni_code: str) -> pd.DataFrame:
+    # Lấy tổ hợp môn từ database
+    ma_nganh_list = df_schools['major_code'].tolist()
     
-    # Bước 2: Lấy tổ hợp môn từ database
-    ma_nganh_list = filtered_schools['ma_nganh'].tolist()
-    to_hop_data = get_to_hop_mon_from_db(ma_nganh_list)
-    print(to_hop_data)
-    # Bước 3: Tính điểm học bạ cho từng ngành
+    to_hop_data = get_subject_combination(db, ma_nganh_list, uni_code)
+    to_hop_list = to_hop_data["subject_combination"].to_list()
+
+    # Tính điểm học bạ cho từng ngành
     results = []
     
-    for _, row in filtered_schools.iterrows():
-        ma_nganh = row['ma_nganh']
+    for _, row in df_schools.iterrows():
+        ma_nganh = row['major_code']
+        ten_nganh = row.get('major_name', '')
+        diem_chuan = row.get('score', 0.0)  
+        nhom_nganh = int(row.get('major_group', user_input.nhom_nganh))
+
         print(f"Ngành: {ma_nganh}")
         to_hop_list = parse_to_hop_from_dataframe(to_hop_data, ma_nganh)
         print(f"Tổ hợp: {to_hop_list}")
@@ -38,31 +37,42 @@ def process_admission_calculation(user_input: UserInputL3, df_schools: pd.DataFr
         # Tổng điểm
         total_score = best_score + bonus
         
-        # Thêm vào kết quả
-        result_row = row.to_dict()
-        result_row.update({
-            'to_hop_list': to_hop_list,
+        # Create result record
+        result = {
+            'ma_nganh': ma_nganh,
+            'ten_nganh': ten_nganh,
+            'diem_chuan': round(diem_chuan, 2),
+            'nhom_nganh': nhom_nganh,
             'best_to_hop': best_to_hop,
             'best_to_hop_score': round(best_score, 2),
             'bonus_points': round(bonus, 2),
             'total_score': round(total_score, 2)
-        })
-        results.append(result_row)
+        }
+
+        # # Thêm vào kết quả
+        # result_row = row.to_dict()
+        # result_row.update({
+        #     'to_hop_list': to_hop_list,
+        #     'best_to_hop': best_to_hop,
+        #     'best_to_hop_score': round(best_score, 2),
+        #     'bonus_points': round(bonus, 2),
+        #     'total_score': round(total_score, 2)
+        # })
+        results.append(result)
     
     if not results:
         return pd.DataFrame()
     
     result_df = pd.DataFrame(results)
+
+    df_filtered = result_df[result_df['total_score'] >= result_df['diem_chuan']]
     # Sắp xếp theo điểm từ cao xuống thấp
-    result_df = result_df.sort_values('total_score', ascending=False)
-    
-    return result_df
+    df_filtered = df_filtered.sort_values('total_score', ascending=False)
+    return df_filtered
 
 if __name__ == "__main__":
     
     df_schools = pd.read_excel("data/hocba_l3.xlsx")
-    
-    from src.services.l3.spk.schema import HocBa, Grade, AwardQG, AwardEnglish, UserInputL3
     
     hoc_ba = HocBa(
         grade_10=Grade(toan=9.0, ly=8.5, hoa=8.0, van=7.5, anh=9.0),

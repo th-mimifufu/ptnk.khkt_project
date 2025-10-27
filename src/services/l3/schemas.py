@@ -1,13 +1,11 @@
-from pydantic import BaseModel, Field, field_validator
-from typing import List, Optional, Set, ClassVar
+from pydantic import BaseModel, Field, field_validator, validator
+from typing import Dict, List, Optional, Set, ClassVar
 from enum import Enum
 from src.services.constants import TinhTP, NhomNganh, ToHopMon
-
 class PriorityRegion(float, Enum):
     REGION_1 = 0.75
     REGION_2 = 0.25
     REGION_3 = 0.0
-
 
 class PriorityObject(float, Enum):
     NORMAL = 0.0
@@ -121,13 +119,32 @@ class TNTHPTScores(BaseModel):
     elective_1_score: SubjectScores = Field(..., description="Điểm môn tự chọn 1")
     elective_2_score: SubjectScores = Field(..., description="Điểm môn tự chọn 2")
 
+    @validator("math_score", pre=True, always=True)
+    def set_math_subject_name(cls, v):
+        if isinstance(v, dict):
+            v["subject_name"] = "Toán"
+            return v
+        if isinstance(v, SubjectScores):
+            v.subject_name = "Toán"
+            return v
+        return v
+
+    @validator("literature_score", pre=True, always=True)
+    def set_literature_subject_name(cls, v):
+        if isinstance(v, dict):
+            v["subject_name"] = "Văn"
+            return v
+        if isinstance(v, SubjectScores):
+            v.subject_name = "Văn"
+            return v
+        return v
 class UserInputL3(BaseModel):
     """Input chính cho L3 với NangKhieu tách riêng"""
     cong_lap: int = Field(..., ge=0, le=1, description="1: Công lập, 0: Tư thục")
     tinh_tp: str = Field(..., description="Tỉnh/Thành phố (vd: TP. Hồ Chí Minh, ...)")
     hoc_phi: float = Field(..., ge=0, description="Mức học phí dự kiến (VNĐ/năm)")
     hoc_ba: HocBa = Field(..., description="Điểm học bạ lớp 10, 11, 12")
-    nang_khieu: Optional[NangKhieu] = Field(None, description="Điểm năng khiếu (vẽ)")
+    nang_khieu: Optional[NangKhieu] = None
     award_qg: Optional[AwardQG] = None
     award_english: Optional[AwardEnglish] = None
     int_cer: Optional[InterCer] = Field(None, description="Chứng chỉ quốc tế (vd: SAT, IB, ...)")
@@ -155,9 +172,18 @@ class UserInputL3(BaseModel):
             raise ValueError("cong_lap must be 0 or 1")
         return iv
 
+class UniversityResult(BaseModel):
+    ma_nganh: str
+    ten_nganh: str
+    diem_chuan: float
+    nhom_nganh: int
+    best_to_hop: List[str]
+    best_to_hop_score: float
+    bonus_points: float
+    total_score: float
+
 class L3PredictResult(BaseModel):
-    ma_xet_tuyen: str = Field(..., description="Mã xét tuyển")
-    score: float = Field(..., description="Điểm xác suất model dự đoán mức độ phù hợp cho lựa chọn này")
+    result: Dict[str, List[UniversityResult]]
 
 class L3BatchRequest(BaseModel):
     items: List[UserInputL3]

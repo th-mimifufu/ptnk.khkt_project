@@ -9,13 +9,17 @@ from src.services.l3.bk.filter import filter_schools, get_to_hop_mon_from_db
 from src.services.l3.bk.schema import (
     AdmissionInputType1, 
     AdmissionInputType2, 
-    TNTHPTScores as BK_TNTHPTScores,
-    SubjectScores as BK_SubjectScores,
-    HighSchoolTranscript as BK_HighSchoolTranscript,
-    Grade as BK_Grade,
-    DGNL as BK_DGNL,
     CEFRLevel
 )
+
+from src.services.l3.schemas import (
+    TNTHPTScores as BK_TNTHPTScores,
+    SubjectScores as BK_SubjectScores,
+    HocBa as BK_HighSchoolTranscript,
+    Grade as BK_Grade,
+    DGNL as BK_DGNL,
+)
+from src.services.l3.repository import get_subject_combination
 
 def convert_hoc_ba_to_high_school_transcript(hoc_ba):
     """Convert HocBa to HighSchoolTranscript"""
@@ -145,28 +149,22 @@ def validate_user_input(user_input: UserInputL3) -> bool:
         
     return True
 
-def process_admission_calculation(user_input: UserInputL3, df_schools: pd.DataFrame) -> pd.DataFrame:
-    print("User Input:", user_input)
-    # Bước 1: Lọc trường theo điều kiện
-    filtered_schools = filter_schools(df_schools, user_input)
-    print(filtered_schools)
-    if filtered_schools.empty:
-        return pd.DataFrame()
+def process_admission_calculation(db, user_input: UserInputL3, df_schools: pd.DataFrame, uni_code: str) -> pd.DataFrame:
+    # Lấy tổ hợp môn từ database
+    ma_nganh_list = df_schools['major_code'].tolist()
     
-    # Bước 2: Lấy tổ hợp môn từ database
-    ma_nganh_list = filtered_schools['nganh'].tolist()
-    to_hop_data = get_to_hop_mon_from_db(ma_nganh_list)
-    print(to_hop_data)
+    to_hop_data = get_subject_combination(db, ma_nganh_list, uni_code)
+    to_hop_list = to_hop_data["subject_combination"].to_list()
     
     # Bước 3: Nếu trong user input có đánh giá năng lực thì tính công thức 1, nếu không có tính công thức 2
     results = []
 
-    for _, row in filtered_schools.iterrows():
-        ma_nganh = row['nganh']
+    for _, row in df_schools.iterrows():
+        ma_nganh = row['major_code']
         print(f"Ngành: {ma_nganh}")
-        ten_nganh = row.get('ten_nganh', '')
-        diem_chuan = row.get('diem_chuan', 0.0)  
-        nhom_nganh = int(row.get('nhom_nganh', user_input.nhom_nganh))
+        ten_nganh = row.get('major_name', '')
+        diem_chuan = row.get('score', 0.0)  
+        nhom_nganh = int(row.get('major_group', user_input.nhom_nganh))
 
         to_hop_list = parse_to_hop_from_dataframe(to_hop_data, ma_nganh)
         print(f"Tổ hợp: {to_hop_list}")

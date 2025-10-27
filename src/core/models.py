@@ -46,3 +46,29 @@ class Admission(Base):
     uni_type = Column(Integer)
     uni_web_link = Column(String)
     updatedAt = Column(String)
+
+
+class L3Transcript(Base):
+    __tablename__ = "l3_transcript"
+    __table_args__ = {'schema': 'machine_learning'}
+    createdAt = Column(String)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    major_code = Column(String)
+    major_group = Column(Integer)
+    major_name = Column(String)
+    province = Column(String)
+    score = Column(Float)
+    tuition_fee = Column(Integer)
+    uni_code = Column(String)
+    uni_type = Column(Integer)
+    updatedAt = Column(String)
+
+class TranscriptSujectGroup(Base):
+    __tablename__ = "transcript_subject_group"
+    __table_args__ = {'schema': 'machine_learning'}
+    createdAt = Column(String)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    major_code = Column(String)
+    subject_combination = Column(String)
+    uni_code = Column(String)
+    updatedAt = Column(String)

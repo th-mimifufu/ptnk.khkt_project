@@ -3,7 +3,8 @@ from typing import Dict, List
 import pandas as pd
 
 from src.services.l3.bk.hb import SUBJECT_MAP
-from src.services.l3.bk.schema import DGNL, AdmissionInputType1, AdmissionInputType2, AdmissionResult, CEFRLevel, HighSchoolTranscript, PriorityObject, PriorityRegion, SubjectCombination, TNTHPTScores
+from src.services.l3.schemas import DGNL, PriorityObject, PriorityRegion, TNTHPTScores, HocBa
+from src.services.l3.bk.schema import AdmissionInputType1, AdmissionInputType2, AdmissionResult, CEFRLevel
 
 cefr_to_english_points: Dict[str, float] = {
         "B1": 8.0,
@@ -58,9 +59,10 @@ def calculate_tnthpt_converted(tnthpt: TNTHPTScores, subject_combination: List[s
     total_score = sum(subject_scores)
     return (total_score / 3) * 10
 
-def calculate_high_school_grade(grades: HighSchoolTranscript, subject: str, eng_cer: CEFRLevel=None) -> float:
+def calculate_high_school_grade(grades: HocBa, subject: str, eng_cer: CEFRLevel=None) -> float:
     """Tính điểm trung bình 3 năm của một môn học trong THPT"""
     field_name = SUBJECT_MAP.get(subject, subject.lower())
+    print(222, field_name)
     scores = []
     if field_name == "anh" and eng_cer is not None:
         # Nếu là môn Anh và có chứng chỉ thì dùng điểm quy đổi cho cả 3 năm
@@ -74,7 +76,7 @@ def calculate_high_school_grade(grades: HighSchoolTranscript, subject: str, eng_
     
     return sum(scores) / len(scores) if scores else 0.0
 
-def calculate_high_school_converted(grades: HighSchoolTranscript, subject_combination: List[str], eng_cer: CEFRLevel=None) -> float:
+def calculate_high_school_converted(grades: HocBa, subject_combination: List[str], eng_cer: CEFRLevel=None) -> float:
     """Tính điểm học THPT quy đổi"""
     # Lấy điểm trung bình 3 năm của các môn trong tổ hợp
     if len(subject_combination) != 3:
@@ -163,19 +165,19 @@ def parse_to_hop_from_dataframe(df_to_hop: pd.DataFrame, ma_nganh: str) -> List[
         List[List[str]]: [["Toán", "Lý", "Hóa"], ["Toán", "Hóa", "Anh"], ...]
     """
     # Lọc các dòng cho ngành này
-    nganh_rows = df_to_hop[df_to_hop['nganh'] == ma_nganh]
+    nganh_rows = df_to_hop[df_to_hop['major_code'] == ma_nganh]
     
     to_hop_list = []
     
     for _, row in nganh_rows.iterrows():
-        to_hop_str = row['to_hop_mon']
+        to_hop_str = row['subject_combination']
         
         # Parse "(Toán, Lý, Hoá)" -> ["Toán", "Lý", "Hoá"]
         if isinstance(to_hop_str, str):
             # Loại bỏ dấu ngoặc
             clean_str = to_hop_str.strip("()")
             # Split và clean whitespace
-            subjects = [s.strip() for s in clean_str.split(",")]
+            subjects = [s.strip().rstrip(")") for s in clean_str.split(",")]
             
             # Đảm bảo có đủ 3 môn
             if len(subjects) == 3:

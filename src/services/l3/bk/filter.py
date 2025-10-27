@@ -1,6 +1,6 @@
 from typing import Dict, List
 import pandas as pd
-from src.services.l3.spk.schema import UserInputL3
+from src.services.l3.schemas import UserInputL3
 
 def filter_schools(df_schools: pd.DataFrame, user_input: UserInputL3) -> pd.DataFrame:
     """

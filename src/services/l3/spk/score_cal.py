@@ -1,6 +1,6 @@
 from typing import List, Tuple, Any
 from src.services.l3.bk.constants import SUBJECT_MAP, AWARD_QG_POINTS, AWARD_ENGLISH_POINTS
-from src.services.l3.spk.schema import HocBa
+from src.services.l3.schemas import HocBa
 import pandas as pd
 
 def get_dtbm(hoc_ba: HocBa, subject: str) -> float:
@@ -109,19 +109,19 @@ def parse_to_hop_from_dataframe(df_to_hop: pd.DataFrame, ma_nganh: str) -> List[
         List[List[str]]: [["Toán", "Lý", "Hóa"], ["Toán", "Hóa", "Anh"], ...]
     """
     # Lọc các dòng cho ngành này
-    nganh_rows = df_to_hop[df_to_hop['nganh'] == ma_nganh]
+    nganh_rows = df_to_hop[df_to_hop['major_code'] == ma_nganh]
     
     to_hop_list = []
     
     for _, row in nganh_rows.iterrows():
-        to_hop_str = row['Tổ hợp môn']
+        to_hop_str = row['subject_combination']
         
         # Parse "(Toán, Lý, Hoá)" -> ["Toán", "Lý", "Hoá"]
         if isinstance(to_hop_str, str):
             # Loại bỏ dấu ngoặc
             clean_str = to_hop_str.strip("()")
             # Split và clean whitespace
-            subjects = [s.strip() for s in clean_str.split(",")]
+            subjects = [s.strip().rstrip(")") for s in clean_str.split(",")]
             
             # Đảm bảo có đủ 3 môn
             if len(subjects) == 3:

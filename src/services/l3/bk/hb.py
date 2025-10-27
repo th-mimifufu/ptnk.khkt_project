@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Set
 import pandas as pd
 
-from src.services.l3.spk.schema import HocBa, Grade
+from src.services.l3.schemas import HocBa, Grade
 AWARD_QG_POINTS = {
     1: 1.2,
     2: 1.2,
