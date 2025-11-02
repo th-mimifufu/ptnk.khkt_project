@@ -8,14 +8,14 @@ services:
       - .env.staging
     restart: unless-stopped
     networks:
-      - shared-network
+      - app-shared-network
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health || exit 1"]
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
 networks:
-  shared-network:
+  app-shared-network:
     name: app-shared-network
