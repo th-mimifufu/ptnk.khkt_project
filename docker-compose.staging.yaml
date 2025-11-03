@@ -18,4 +18,5 @@ services:
 
 networks:
   app-shared-network:
+    driver: bridge
     name: app-shared-network
