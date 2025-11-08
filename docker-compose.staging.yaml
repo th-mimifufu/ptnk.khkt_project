@@ -1,0 +1,22 @@
+services:
+  ml_api_staging:
+    image: khanhlinh02/ml-service:latest
+    container_name: ml_api_staging
+    ports:
+      - "8002:8000"
+    env_file:
+      - .env.staging
+    restart: unless-stopped
+    networks:
+      - app-shared-network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-shared-network:
+    driver: bridge
+    name: app-shared-network
