@@ -9,7 +9,7 @@ def calculate_scores_for_all_universities(user_input: UserInputL3, db) -> L3Pred
     Nhận user_input → tự động gọi cả 2 bộ tính điểm (SPK và QSB)
     """
     df_all = get_all_transcript_data(db, user_input)
-    result = {"SPK": None, "QSB": None}
+    result = {"SPK": [], "QSB": []}
 
     if df_all.empty:
         return L3PredictResult(result=result)
