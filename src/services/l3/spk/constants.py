@@ -26,5 +26,12 @@ SUBJECT_MAP = {
     "Tin": "tin",
     "GDKT&PL": "gdkt_pl",
     "Vẽ TT": "ve_tt",
-    "Vẽ DT": "ve_dt"
+    "Vẽ DT": "ve_dt",
+    "Tiếng Nga": "tieng_nga",
+    "Tiếng Pháp": "tieng_phap",
+    "Tiếng Trung": "tieng_trung",
+    "Tiếng Đức": "tieng_duc",
+    "Tiếng Nhật": "tieng_nhat",
+    "Tiếng Hàn": "tieng_han",
+    "Công nghệ": "cong_nghe"
 }

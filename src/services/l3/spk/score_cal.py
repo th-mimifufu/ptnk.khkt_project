@@ -81,7 +81,15 @@ def calculate_bonus(award_qg: Any, award_english: Any, ma_nganh: str) -> float:
         Tổng điểm thưởng
     """
     bonus = 0.0
-    
+    # Nếu award_qg là list thì lấy random 1 element có level thấp nhất (1-4) là 1
+    if isinstance(award_qg, list) and len(award_qg) > 0:
+        # lọc ra những phần tử có thuộc tính level, lấy min(level)
+        valid_awards = [a for a in award_qg if hasattr(a, "level")]
+        if valid_awards:
+            award_qg = min(valid_awards, key=lambda a: a.level)
+        else:
+            award_qg = None
+            
     # Điểm thưởng quốc gia
     if award_qg and hasattr(award_qg, 'level'):
         bonus += AWARD_QG_POINTS.get(award_qg.level, 0.0)

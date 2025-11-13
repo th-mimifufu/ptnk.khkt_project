@@ -28,6 +28,7 @@ def calculate_scores_for_all_universities(user_input: UserInputL3, db) -> L3Pred
     df_qsb = df_all[df_all["uni_code"] == "QSB"]
     if not df_qsb.empty:
         try:
+            print(1112)
             result_qsb = process_qsb(db, user_input, df_qsb, "QSB")
             if isinstance(result_qsb, pd.DataFrame) and not result_qsb.empty:
                 result["QSB"] = result_qsb.to_dict(orient="records")

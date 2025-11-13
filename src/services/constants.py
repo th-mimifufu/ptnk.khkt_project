@@ -33,7 +33,31 @@ class HSGSubject(StrEnum):
     TIENG_TRUNG = "Tiếng Trung"
     TIENG_NHAT = "Tiếng Nhật"
     TIENG_NGA = "Tiếng Nga"
+    TIENG_HAN = "Tiếng Hàn"
+    TIENG_DUC = "Tiếng Đức"
+    GDKT_PL = "GDKT&PL"
+    CONG_NGHE_CONG_NGHIEP = "Công nghệ công nghiệp"
+    CONG_NGHE_NONG_NGHIEP = "Công nghệ nông nghiệp"
 
+class SubjectName(StrEnum):
+    TOAN = "Toán"
+    VAN = "Văn"
+    ANH = "Anh"
+    LY = "Lý"
+    HOA = "Hoá"
+    SINH = "Sinh"
+    SU = "Sử"
+    DIA = "Địa"
+    TIN = "Tin"
+    TIENG_PHAP = "Tiếng Pháp"
+    TIENG_TRUNG = "Tiếng Trung"
+    TIENG_NHAT = "Tiếng Nhật"
+    TIENG_NGA = "Tiếng Nga"
+    TIENG_HAN = "Tiếng Hàn"
+    TIENG_DUC = "Tiếng Đức"
+    GDKT_PL = "GDKT&PL"
+    CONG_NGHE_CONG_NGHIEP = "Công nghệ công nghiệp"
+    CONG_NGHE_NONG_NGHIEP = "Công nghệ nông nghiệp"
 class NhomNganh(IntEnum):
     GIAO_DUC_DAO_TAO      = 714
     NHAN_VAN              = 722

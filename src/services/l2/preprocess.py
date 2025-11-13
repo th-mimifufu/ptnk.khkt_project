@@ -1,3 +1,4 @@
+from enum import Enum
 import os
 import re
 import numpy as np
@@ -33,9 +34,13 @@ from src.services.l2.repository import filter_L2_requirements
 #     test_df = input_to_pairs_L2(pl.from_pandas(df), l2_uni)
 #     return test_df
 
-def input_to_pairs_L2(input: UserInputL2) -> pd.DataFrame:
-    input_data = pl.DataFrame([input.model_dump()])
-    
+def input_to_pairs_L2(input: UserInputL2) -> pd.DataFrame: 
+    input_dict = input.model_dump()
+    for k, v in input_dict.items():
+        if isinstance(v, Enum):
+            input_dict[k] = v.value
+
+    input_data = pl.DataFrame([input_dict])
     cand_tp = input_data['tinh_tp'].unique().to_list()
     cand_thm = input_data['to_hop_mon'].unique().to_list()
     cand_cl = input_data['cong_lap'].unique().to_list()

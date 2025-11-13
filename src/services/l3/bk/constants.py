@@ -26,4 +26,11 @@ SUBJECT_MAP = {
     "Địa": "dia", 
     "Tin": "tin",
     "GDKT&PL": "gdkt_pl",
+    "Tiếng Nga": "tieng_nga",
+    "Tiếng Pháp": "tieng_phap",
+    "Tiếng Trung": "tieng_trung",
+    "Tiếng Đức": "tieng_duc",
+    "Tiếng Nhật": "tieng_nhat",
+    "Tiếng Hàn": "tieng_han",
+    "Công nghệ": "cong_nghe"
 }

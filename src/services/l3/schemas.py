@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator, validator
-from typing import Dict, List, Optional, Set, ClassVar
+from typing import Dict, List, Literal, Optional, Set, ClassVar
 from enum import Enum
-from src.services.constants import TinhTP, NhomNganh, ToHopMon
+from src.services.constants1 import TinhTP, NhomNganh, HSGSubject, CEFRLevel, SubjectName
 class PriorityRegion(float, Enum):
     REGION_1 = 0.75
     REGION_2 = 0.25
@@ -14,26 +14,26 @@ class PriorityObject(float, Enum):
 
 class Grade(BaseModel):
     """Điểm học bạ - chỉ chứa các môn học chính"""
-    toan: Optional[float] = Field(None, ge=0, le=10)
-    ly: Optional[float] = Field(None, ge=0, le=10)
-    hoa: Optional[float] = Field(None, ge=0, le=10)
-    van: Optional[float] = Field(None, ge=0, le=10)
-    anh: Optional[float] = Field(None, ge=0, le=10)
-    sinh: Optional[float] = Field(None, ge=0, le=10)
-    su: Optional[float] = Field(None, ge=0, le=10)
-    dia: Optional[float] = Field(None, ge=0, le=10)
-    tin: Optional[float] = Field(None, ge=0, le=10)
-    gdkt_pl: Optional[float] = Field(None, ge=0, le=10)
-    cong_nghe_cong_nghiep: Optional[float] = Field(None, ge=0, le=10)
+    toan: float = Field(..., ge=0, le=10)
+    ly: float = Field(..., ge=0, le=10)
+    hoa: float = Field(..., ge=0, le=10)
+    van: float = Field(..., ge=0, le=10)
+    anh: float = Field(..., ge=0, le=10)
+    sinh: float = Field(..., ge=0, le=10)
+    su: float = Field(..., ge=0, le=10)
+    dia: float = Field(..., ge=0, le=10)
+    tin: float = Field(..., ge=0, le=10)
+    gdkt_pl: float = Field(..., ge=0, le=10)
+    cong_nghe: float = Field(..., ge=0, le=10)
 
-class NangKhieuAmNhac1(BaseModel):
-    """Năng khiếu Âm nhạc 1: Hát và Xướng âm"""
-    hat_va_xuong_am: Optional[float] = Field(None, ge=0, le=10, description="Điểm hát và xướng âm")
+# class NangKhieuAmNhac1(BaseModel):
+#     """Năng khiếu Âm nhạc 1: Hát và Xướng âm"""
+#     hat_va_xuong_am: Optional[float] = Field(None, ge=0, le=10, description="Điểm hát và xướng âm")
 
-class NangKhieuAmNhac2(BaseModel):
-    """Năng khiếu Âm nhạc 2: Thanh nhạc hoặc Nhạc cụ"""
-    thanh_nhac: Optional[float] = Field(None, ge=0, le=10, description="Điểm thanh nhạc (hát có thể kết hợp nhạc cụ)")
-    nhac_cu: Optional[float] = Field(None, ge=0, le=10, description="Điểm nhạc cụ (hát và đàn)")
+# class NangKhieuAmNhac2(BaseModel):
+#     """Năng khiếu Âm nhạc 2: Thanh nhạc hoặc Nhạc cụ"""
+#     thanh_nhac: Optional[float] = Field(None, ge=0, le=10, description="Điểm thanh nhạc (hát có thể kết hợp nhạc cụ)")
+#     nhac_cu: Optional[float] = Field(None, ge=0, le=10, description="Điểm nhạc cụ (hát và đàn)")
 
 class NangKhieuKhoiT(BaseModel):
     """Điểm năng khiếu khối T (Thể thao)"""
@@ -47,8 +47,8 @@ class NangKhieuKhoiM(BaseModel):
 class NangKhieuKhoiN(BaseModel):
     """Điểm năng khiếu khối N"""
     # Âm nhạc cụ thể
-    nang_khieu_am_nhac_1: Optional[NangKhieuAmNhac1] = Field(None, description="Năng khiếu Âm nhạc 1")
-    nang_khieu_am_nhac_2: Optional[NangKhieuAmNhac2] = Field(None, description="Năng khiếu Âm nhạc 2")
+    nang_khieu_am_nhac_1: Optional[float] = Field(None, ge=0, le=10, description="Năng khiếu Âm nhạc 1")
+    nang_khieu_am_nhac_2: Optional[float] = Field(None, ge=0, le=10, description="Năng khiếu Âm nhạc 2")
     
     # Các loại khác
     xuong_am: Optional[float] = Field(None, ge=0, le=10, description="Điểm xướng âm")
@@ -87,23 +87,32 @@ class HocBa(BaseModel):
     grade_12: Grade
 
 class AwardQG(BaseModel):
-    subject: str = Field(..., description="Tên môn (Toán, Văn, Anh, ...)")
+    subject: HSGSubject = Field(..., description="Tên môn (Toán, Văn, Anh, ...)")
     level: int = Field(..., ge=1, le=4) 
 
 class AwardEnglish(BaseModel):
-    level: str = Field(..., pattern="^(A1|A2|B1|B2|C1|C2)$")
+    level: CEFRLevel = Field(..., description="Chứng chỉ tiếng anh")
+
+InterCertLiteral = Literal[
+    "A_Level",
+    "ACT",
+    "Duolingo_English_Test",
+    "IB",
+    "OSSD",
+    "PTE_Academic",
+    "SAT",
+]
 
 class InterCer(BaseModel):
-    name: str = Field(..., description="Tên chứng chỉ (SAT, IB, ...)")
-    score: float = Field(..., description="Điểm số chứng chỉ")
+    name: InterCertLiteral = Field(..., description="Tên chứng chỉ (SAT, IB, ...)")
+    score: str = Field(..., description="Điểm số chứng chỉ")
 
 class DGNL(BaseModel):
     language_score: int = Field(..., ge=0, le=400, description="Điểm phần sử dụng ngôn ngữ")
     math_score: int = Field(..., ge=0, le=300, description="Điểm phần toán học")
     science_logic: int = Field(..., ge=0, le=500, description="Điểm phần tư duy khoa học")
-
 class SubjectScores(BaseModel):
-    subject_name: str = Field(..., description="Tên môn học")
+    subject_name: SubjectName = Field(..., description="Tên môn học")
     score: float = Field(..., ge=0, le=10, description="Điểm môn học")
 
 class TNTHPTScores(BaseModel):
@@ -145,7 +154,7 @@ class UserInputL3(BaseModel):
     hoc_phi: float = Field(..., ge=0, description="Mức học phí dự kiến (VNĐ/năm)")
     hoc_ba: HocBa = Field(..., description="Điểm học bạ lớp 10, 11, 12")
     nang_khieu: Optional[NangKhieu] = None
-    award_qg: Optional[AwardQG] = None
+    award_qg: Optional[List[AwardQG]] = None
     award_english: Optional[AwardEnglish] = None
     int_cer: Optional[InterCer] = Field(None, description="Chứng chỉ quốc tế (vd: SAT, IB, ...)")
     dgnl: Optional[DGNL] = Field(None, description="Điểm đánh giá năng lực (nếu có)")

@@ -1,9 +1,10 @@
+from enum import Enum
 from typing import Dict, List
 
 import pandas as pd
 
 from src.services.l3.bk.hb import SUBJECT_MAP
-from src.services.l3.schemas import DGNL, PriorityObject, PriorityRegion, TNTHPTScores, HocBa
+from src.services.l3.schemas import DGNL, AwardQG, PriorityObject, PriorityRegion, TNTHPTScores, HocBa
 from src.services.l3.bk.schema import AdmissionInputType1, AdmissionInputType2, AdmissionResult, CEFRLevel
 
 cefr_to_english_points: Dict[str, float] = {
@@ -27,25 +28,47 @@ def calculate_capability_score_type2(tnthpt_converted: float) -> float:
     """Tính điểm năng lực cho Đối tượng 2"""
     return tnthpt_converted * 0.75
 
+def normalize_subject_name(name: str) -> str:
+    """Chuyển tên môn học về dạng chuẩn hóa."""
+    SUBJECT_ALIAS = {
+        "Công Nghệ Nông Nghiệp": "Công nghệ",
+        "Công Nghệ Công Nghiệp": "Công nghệ",
+    }
+    if not name:
+        return name
+    name = name.strip().title()  # loại bỏ khoảng trắng + chuẩn hóa viết hoa đầu
+    return SUBJECT_ALIAS.get(name, name)
+
 def calculate_tnthpt_converted(tnthpt: TNTHPTScores, subject_combination: List[str], eng_cer: CEFRLevel=None) -> float:
     """Tính điểm TNTHPT dựa trên tổ hợp môn.
     subject_combination: List 3 môn trong tổ hợp. Vd:["Toán", "Hóa", "Anh"]
     Công thức: (môn_đầu_tiên + môn_thứ_hai + môn_thứ_ba) / 3 * 10
     """
-    if not subject_combination or len(subject_combination) < 3:
-        return 0.0
+    # if not subject_combination or len(subject_combination) < 3:
+    #     return 0.0
     
     # Tạo dictionary mapping từ tên môn đến điểm
     subject_scores_dict = {
-        tnthpt.math_score.subject_name: tnthpt.math_score.score,
-        tnthpt.literature_score.subject_name: tnthpt.literature_score.score,
-        tnthpt.elective_1_score.subject_name: tnthpt.elective_1_score.score,
-        tnthpt.elective_2_score.subject_name: tnthpt.elective_2_score.score
+        tnthpt.math_score.subject_name.value if isinstance(tnthpt.math_score.subject_name, Enum) else tnthpt.math_score.subject_name: tnthpt.math_score.score,
+        tnthpt.literature_score.subject_name.value if isinstance(tnthpt.literature_score.subject_name, Enum) else tnthpt.literature_score.subject_name: tnthpt.literature_score.score,
+        
+        normalize_subject_name(
+            tnthpt.elective_1_score.subject_name.value if isinstance(tnthpt.elective_1_score.subject_name, Enum)
+            else tnthpt.elective_1_score.subject_name
+        ): tnthpt.elective_1_score.score,
+    
+        normalize_subject_name(
+            tnthpt.elective_2_score.subject_name.value if isinstance(tnthpt.elective_2_score.subject_name, Enum)
+            else tnthpt.elective_2_score.subject_name
+        ): tnthpt.elective_2_score.score,
     }
-    print(123457, convert_cefr_to_english_points(eng_cer))
+    
+    print("subject_scores_dict keys:", list(subject_scores_dict.keys()))
+    print("subject_combination:", subject_combination)
     # Lấy điểm của 3 môn trong tổ hợp
     subject_scores = []
     for subject in subject_combination:
+        print(subject)
         if subject in subject_scores_dict:
             if subject == "Anh" and eng_cer is not None:
                 # Nếu có chứng chỉ tiếng Anh thì dùng điểm từ chứng chỉ
@@ -53,8 +76,8 @@ def calculate_tnthpt_converted(tnthpt: TNTHPTScores, subject_combination: List[s
             else:
                 subject_scores.append(subject_scores_dict[subject])
     
-    if len(subject_scores) < 3:
-        return 0.0
+    # if len(subject_scores) < 3:
+    #     return 0.0
     print("12344 Subject Scores:", subject_scores)
     total_score = sum(subject_scores)
     return (total_score / 3) * 10
@@ -62,7 +85,6 @@ def calculate_tnthpt_converted(tnthpt: TNTHPTScores, subject_combination: List[s
 def calculate_high_school_grade(grades: HocBa, subject: str, eng_cer: CEFRLevel=None) -> float:
     """Tính điểm trung bình 3 năm của một môn học trong THPT"""
     field_name = SUBJECT_MAP.get(subject, subject.lower())
-    print(222, field_name)
     scores = []
     if field_name == "anh" and eng_cer is not None:
         # Nếu là môn Anh và có chứng chỉ thì dùng điểm quy đổi cho cả 3 năm
@@ -83,7 +105,6 @@ def calculate_high_school_converted(grades: HocBa, subject_combination: List[str
         return 0.0
 
     all_scores = [calculate_high_school_grade(grades, subject, eng_cer) for subject in subject_combination]
-    print("123499 All Scores:", all_scores)
     average = sum(all_scores) / len(all_scores) if all_scores else 0
     return average * 10
 
@@ -106,9 +127,23 @@ def calculate_priority_points(academic_score: float,
         factor = (100 - total_before_priority) / 25
         return round(factor * priority_converted, 2)
 
+# def calculate_bonus_points(academic_score: float,
+#                                 qg_award: List[AwardQG]) -> float:
+#     """Tính điểm cộng"""
+#     priority_converted =  qg_award.get("level")
+#     total_before_priority = academic_score
+
+#     if total_before_priority < 75:
+#         return priority_converted
+#     else:
+#         factor = (100 - total_before_priority) / 25
+#         return round(factor * priority_converted, 2)
+    
+
 def calculate_type1(input_data: AdmissionInputType1, to_hop) -> AdmissionResult:
     """Tính điểm cho Đối tượng 1 (có ĐGNL)"""
     # Tính các thành phần điểm
+    print("aaa", to_hop)
     capability_score = calculate_capability_score_type1(
         input_data.dgnl_score)
     tnthpt_converted = calculate_tnthpt_converted(input_data.tnthpt_scores, to_hop, input_data.english_cert)
