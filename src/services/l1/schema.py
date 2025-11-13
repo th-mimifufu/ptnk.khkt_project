@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Literal, Set, ClassVar, Optional, Dict, Union
 
-from src.services.constants import TinhTP, HSGSubject, NhomNganh
+from src.services.constants1 import TinhTP, HSGSubject, NhomNganh
 
 _HSG_Field = Optional[Union[HSGSubject, Literal["0"]]]
 
