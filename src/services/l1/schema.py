@@ -4,7 +4,6 @@ from typing import List, Literal, Set, ClassVar, Optional, Dict, Union
 from src.services.constants1 import TinhTP, HSGSubject, NhomNganh
 
 _HSG_Field = Optional[Union[HSGSubject, Literal["0"]]]
-
 class UserInputL1(BaseModel):
     cong_lap: int = Field(..., ge=0, le=1, description="1: Công lập, 0: Tư thục")
     tinh_tp: str = Field(..., description="Tỉnh/Thành phố (vd: TP. Hồ Chí Minh, ...)")

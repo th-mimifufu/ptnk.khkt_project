@@ -1,9 +1,14 @@
+from enum import Enum
 import pandas as pd
 
 from src.services.l1.schema import UserInputL1
 
 def preprocess_input_data_L1(data: UserInputL1) -> pd.DataFrame:
-    df = pd.DataFrame([data.model_dump()])
+    input_dict = data.model_dump()
+    for k, v in input_dict.items():
+        if isinstance(v, Enum):
+            input_dict[k] = v.value
+    df = pd.DataFrame([input_dict])
     test_df = clean_and_cast_L1(df)
     return test_df
 

@@ -1517,7 +1517,93 @@ SUBJECT_GROUPS = MappingProxyType({
         VietnameseSubject.GDKT_PL,
         VietnameseSubject.CONG_NGHE_NONG_NGHIEP,
     ],
+    "TAC": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.TIENG_ANH,
+        VietnameseSubject.CONG_NGHE_CONG_NGHIEP,
+    ],
+    "TAT": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.TIENG_ANH,
+        VietnameseSubject.TIN,
+    ],
+    "THC": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.HOA_HOC,
+        VietnameseSubject.CONG_NGHE_CONG_NGHIEP,
+    ],
+    "TLC": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.VAT_LY,
+        VietnameseSubject.CONG_NGHE_CONG_NGHIEP,
+    ],
+    "TLT": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.VAT_LY,
+        VietnameseSubject.TIN,
+    ],
+    "TSC": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.SINH,
+        VietnameseSubject.CONG_NGHE_CONG_NGHIEP,
+    ],
+    "TVC": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.VAN,
+        VietnameseSubject.CONG_NGHE_CONG_NGHIEP,
+    ],
+    "TVL": [
+        VietnameseSubject.VAN,
+        VietnameseSubject.VAT_LY,
+        VietnameseSubject.TIN,
+    ],
+    "TVS": [
+        VietnameseSubject.VAN,
+        VietnameseSubject.SINH,
+        VietnameseSubject.TIN,
+    ],
+    "TVT": [
+        VietnameseSubject.TOAN,
+        VietnameseSubject.VAN,
+        VietnameseSubject.TIN,
+    ],
+    "VAT": [
+        VietnameseSubject.VAN,
+        VietnameseSubject.TIENG_ANH,
+        VietnameseSubject.TIN,
+    ],
+    "VSC": [
+        VietnameseSubject.VAN,
+        VietnameseSubject.SINH,
+        VietnameseSubject.CONG_NGHE_CONG_NGHIEP,
+    ],
 })
+
+class OtherSbujectHandle(StrEnum):
+    TOEFLiBT = "TOEFLiBT"
+    TOEIC = "TOEIC"
+    IELTS = "IELTS"
+    HSA = "HSA"
+    TSA = "TSA"
+    SAT = "SAT"
+    ACT = "ACT"
+    IB = "IB"
+    OSSD = "OSSD"
+    ALEVEL = "Alevel"
+    DoulingoEnglishTest = "DoulingoEnglishTest"
+    PTEAcademic = "PTEAcademic"
+    TestAS_Kinhtế = "TestAS(Kinhtế)"
+    TestAS_Toánhọc_KHMT_KHTN = "TestAS(Toánhọc,KHMT,KHTN)"
+    TestAS_Kỹthuật = "TestAS(Kỹthuật)"
+    H = "H"
+    TOEFLIPT = "TOEFLIPT"
+    THT = "THT"
+    TLT = "TLT"
+    TST = "TST"
+    TTA = "TTA"
+    TVK = "TVK"
+    VNUHCM = "VNUHCM"
+
 
 class TinhTP(StrEnum):
     AN_GIANG = "An Giang"
@@ -1560,11 +1646,63 @@ HSG_SUBJECTS = [
 ]
 
 SubjectGroup = Enum("SubjectGroup", {key: key for key in SUBJECT_GROUPS})
+L2SubjectGroup = Enum(
+    "L2SubjectGroup",
+    {key: key for key in SUBJECT_GROUPS} |
+    {key: key.value for key in OtherSbujectHandle}
+)
+
 HSGSubject = Enum("HSGSubject", {item.name: item.value for item in HSG_SUBJECTS})
 
 SUBJECTNAME_MAIN = HSG_SUBJECTS.copy()
 
 SubjectName = Enum("SubjectName", {item.name: item.value for item in SUBJECTNAME_MAIN})
+
+# NANG_KHIEU = [
+#     VietnameseSubject.BIEU_DIEN_NGHE_THUAT,
+#     VietnameseSubject.CHI_HUY_TAI_CHO,
+#     VietnameseSubject.CHUYEN_MON_AM_NHAC,
+#     VietnameseSubject.CHUYEN_MON_AM_NHAC_1,
+#     VietnameseSubject.CHUYEN_MON_AM_NHAC_2,
+#     VietnameseSubject.DOC_DIEN_CAM,
+#     VietnameseSubject.DOC_HIEU,
+#     VietnameseSubject.GHI_AM_XUONG_AM,
+#     VietnameseSubject.HAT,
+#     VietnameseSubject.HAT_BIEU_DIEN_NHAC_CU,
+#     VietnameseSubject.HAT_MUA,
+#     VietnameseSubject.HAT_XUONG_AM,
+#     VietnameseSubject.HOA_THANH,
+#     VietnameseSubject.KY_XUONG_AM,
+#     VietnameseSubject.NANG_KHIEU,
+#     VietnameseSubject.NANG_KHIEU_1,
+#     VietnameseSubject.NANG_KHIEU_2,
+#     VietnameseSubject.NANG_KHIEU_AM_NHAC_1,
+#     VietnameseSubject.NANG_KHIEU_AM_NHAC_2,
+#     VietnameseSubject.NANG_KHIEU_ANH_BAO_CHI,
+#     VietnameseSubject.NANG_KHIEU_BAO_CHI,
+#     VietnameseSubject.NANG_KHIEU_BIEU_DIEN_NGHE_THUAT,
+#     VietnameseSubject.NANG_KHIEU_KIEN_THUC_VAN_HOA_XA_HOI_NGHE_THUAT,
+#     VietnameseSubject.NANG_KHIEU_MAM_NON,
+#     VietnameseSubject.NANG_KHIEU_MAM_NON_1,
+#     VietnameseSubject.NANG_KHIEU_MAM_NON_2,
+#     VietnameseSubject.NANG_KHIEU_QUAY_PHIM_TRUYEN_HINH,
+#     VietnameseSubject.NANG_KHIEU_SKDA_1,
+#     VietnameseSubject.NANG_KHIEU_SKDA_2,
+#     VietnameseSubject.NANG_KHIEU_TDTT,
+#     VietnameseSubject.NANG_KHIEU_THUYET_TRINH,
+#     VietnameseSubject.NANG_KHIEU_VE_1,
+#     VietnameseSubject.NANG_KHIEU_VE_2,
+#     VietnameseSubject.PHAT_TRIEN_CHU_DE_PHO_THO,
+#     VietnameseSubject.TU_DUY_GIAI_QUYET_NGU_VAN_DE,
+#     VietnameseSubject.VE_HINH_HOA,
+#     VietnameseSubject.VE_HINH_HOA_MY_THUAT,
+#     VietnameseSubject.VE_MY_THUAT,
+#     VietnameseSubject.VE_NANG_KHIEU,
+#     VietnameseSubject.VE_TRANG_TRI,
+#     VietnameseSubject.VE_TRANG_TRI_MAU,
+#     VietnameseSubject.XAY_DUNG_KICH_BAN_SU_KIEN
+# ]
+# TalentSubject = Enum("TalentSubject", {item.name: item.value for item in NANG_KHIEU})
 
 class NhomNganh(IntEnum):
     GIAO_DUC_DAO_TAO = 714
