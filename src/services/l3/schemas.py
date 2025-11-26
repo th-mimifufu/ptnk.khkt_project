@@ -202,9 +202,9 @@ class UniversityResult(BaseModel):
     uni_name: str
     uni_type: str       
     province: str
-    uni_web_name: Optional[str] = None
+    uni_web_name: str
     
-    study_program: Optional[str] = None
+    study_program: str
     admission_type: str
     admission_type_name: str
     
