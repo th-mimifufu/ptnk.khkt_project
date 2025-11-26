@@ -42,7 +42,7 @@ class UserInputL2(BaseModel):
     
     @field_validator("to_hop_mon", mode="before")
     @classmethod
-    def norm_thm(cls, v): return str(v).strip().upper() if v is not None else v
+    def norm_thm(cls, v): return str(v).strip() if v is not None else v
 
     @field_validator("ten_ccta", mode="before")
     @classmethod

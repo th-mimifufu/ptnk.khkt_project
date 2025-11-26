@@ -35,7 +35,7 @@ class Admission(Base):
     admission_code = Column(String)
     admission_type = Column(String)
     admission_type_name = Column(String)
-    createdAt = Column(String)
+    created_at = Column(String)
     major_name = Column(String)
     province = Column(String)
     study_program = Column(String)
@@ -45,30 +45,51 @@ class Admission(Base):
     uni_name = Column(String)
     uni_type = Column(Integer)
     uni_web_link = Column(String)
-    updatedAt = Column(String)
+    updated_at = Column(String)
 
+
+# class L3Transcript(Base):
+#     __tablename__ = "l3_transcript"
+#     __table_args__ = {'schema': 'machine_learning'}
+#     created_at = Column(String)
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     major_code = Column(String)
+#     major_group = Column(Integer)
+#     major_name = Column(String)
+#     province = Column(String)
+#     score = Column(Float)
+#     tuition_fee = Column(Integer)
+#     uni_code = Column(String)
+#     uni_type = Column(Integer)
+#     updated_at = Column(String)
 
 class L3Transcript(Base):
-    __tablename__ = "l3_transcript"
+    __tablename__ = "l3_transcript_new"
     __table_args__ = {'schema': 'machine_learning'}
-    createdAt = Column(String)
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    created_at = Column(String)
+    id = Column(Integer, primary_key=True)
+    uni_code = Column(String)
+    uni_name = Column(String)
+    uni_web_link = Column(String)
     major_code = Column(String)
     major_group = Column(Integer)
     major_name = Column(String)
     province = Column(String)
     score = Column(Float)
     tuition_fee = Column(Integer)
-    uni_code = Column(String)
     uni_type = Column(Integer)
-    updatedAt = Column(String)
+    study_program = Column(String)
+    admission_type = Column(String)
+    admission_type_name = Column(String)
+    admission_code = Column(String)
+    updated_at = Column(String)
 
 class TranscriptSujectGroup(Base):
     __tablename__ = "transcript_subject_group"
     __table_args__ = {'schema': 'machine_learning'}
-    createdAt = Column(String)
+    created_at = Column(String)
     id = Column(Integer, primary_key=True, autoincrement=True)
     major_code = Column(String)
     subject_combination = Column(String)
     uni_code = Column(String)
-    updatedAt = Column(String)
+    updated_at = Column(String)
