@@ -153,26 +153,26 @@ def process_admission_calculation(db, user_input: UserInputL3, df_schools: pd.Da
     results = []
 
     for _, row in df_schools.iterrows():
-        ma_nganh = row["major_code"]
+        ma_nganh = row['major_code']
         logger.debug(f"Processing major: {ma_nganh}")
 
-        ten_nganh = row.get("major_name", "")
-        diem_chuan = row.get("score", 0.0)
-        nhom_nganh = int(row.get("major_group", user_input.nhom_nganh))
-        admission_code = row.get('admission_code', '')
-        uni_name = row.get('uni_name', '')
-        uni_type = row.get('uni_name', 1)
+        ten_nganh = row['major_name']
+        diem_chuan = row['score']
+        nhom_nganh = int(row.get('major_group', user_input.nhom_nganh))
+        admission_code = row['admission_code']
+        uni_name = row['uni_name']
+        uni_type = row['uni_type']
         if uni_type == 1:
             uni_type = "Công lập"
         else:
             uni_type = "Tư thục"
 
-        province = row.get('province', '')
-        uni_web_name = row.get('uni_web_name', '')
-        study_program = row.get('study_program', '')
-        admission_type = row.get('admission_type', '')
-        admission_type_name = row.get('admission_type_name', '')
-        tuition_fee = row.get('tuition_fee', 0)
+        province = row['province']
+        uni_web_name = row['uni_web_link']
+        study_program = row['study_program']
+        admission_type = row['admission_type']
+        admission_type_name = row['admission_type_name']
+        tuition_fee = row['tuition_fee']
 
         to_hop_list = parse_to_hop_from_dataframe(to_hop_data, ma_nganh)
         if not to_hop_list:
