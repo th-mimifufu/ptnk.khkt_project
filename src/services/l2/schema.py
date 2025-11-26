@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import List, Literal, Optional, Set, ClassVar, Union
 
-from src.services.constants import TinhTP, ToHopMon, CCTA, CEFRLevel, JLPTLevel, NhomNganh
+from src.services.constants1 import TinhTP, L2SubjectGroup, CCTA, CEFRLevel, JLPTLevel, NhomNganh
 
 CCTAName  = Union[CCTA, Literal["0"]]            
 CCTALevel = Optional[Union[CEFRLevel, JLPTLevel, Literal["0"]]]
@@ -9,7 +9,7 @@ CCTALevel = Optional[Union[CEFRLevel, JLPTLevel, Literal["0"]]]
 class UserInputL2(BaseModel):
     cong_lap: int = Field(..., ge=0, le=1, description="1: Công lập, 0: Tư thục")
     tinh_tp: str = Field(..., description="Tỉnh/Thành phố (vd: TP. Hồ Chí Minh, ...)")
-    to_hop_mon: ToHopMon = Field(..., description="Tổ hợp môn (vd: D01, A00, VNUHCM, ...)")
+    to_hop_mon: L2SubjectGroup = Field(..., description="Tổ hợp môn (vd: D01, A00, VNUHCM, ...)")
     diem_chuan: float = Field(..., ge=0, description="Điểm thi thực tế hoặc điểm chuẩn user đạt được")
     hoc_phi: float = Field(..., ge=0, description="Mức học phí dự kiến (VNĐ/năm)")
     ten_ccta: str = Field(..., description="Tên chứng chỉ tiếng anh (nếu có)")
@@ -42,7 +42,7 @@ class UserInputL2(BaseModel):
     
     @field_validator("to_hop_mon", mode="before")
     @classmethod
-    def norm_thm(cls, v): return str(v).strip().upper() if v is not None else v
+    def norm_thm(cls, v): return str(v).strip() if v is not None else v
 
     @field_validator("ten_ccta", mode="before")
     @classmethod

@@ -1,18 +1,17 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Literal, Set, ClassVar, Optional, Dict, Union
 
-from src.services.constants import TinhTP, HSGSubject, NhomNganh
+from src.services.constants1 import TinhTP, HSGSubject, NhomNganh
 
 _HSG_Field = Optional[Union[HSGSubject, Literal["0"]]]
-
 class UserInputL1(BaseModel):
     cong_lap: int = Field(..., ge=0, le=1, description="1: Công lập, 0: Tư thục")
     tinh_tp: str = Field(..., description="Tỉnh/Thành phố (vd: TP. Hồ Chí Minh, ...)")
     hoc_phi: float = Field(..., ge=0, description="Mức học phí dự kiến (VNĐ/năm)")
 
-    hsg_1: _HSG_Field = Field(None, description="Giải nhất HSG quốc gia (vd: Toán, Văn, Anh, ...)")
-    hsg_2: _HSG_Field = Field(None, description="Giải nhì HSG quốc gia (vd: Toán, Văn, Anh, ...)")
-    hsg_3: _HSG_Field = Field(None, description="Giải ba HSG quốc gia (vd: Toán, Văn, Anh, ...)")
+    hsg_1: _HSG_Field = Field(..., description="Giải nhất HSG quốc gia (vd: Toán, Văn, Anh, ...)")
+    hsg_2: _HSG_Field = Field(..., description="Giải nhì HSG quốc gia (vd: Toán, Văn, Anh, ...)")
+    hsg_3: _HSG_Field = Field(..., description="Giải ba HSG quốc gia (vd: Toán, Văn, Anh, ...)")
 
     ahld: int = Field(0, ge=0, le=1, description="Anh hùng LLVT (1: Có, 0: Không)")
     dan_toc_thieu_so: int = Field(0, ge=0, le=1, description="Dân tộc thiểu số (1/0)")
