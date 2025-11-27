@@ -19,5 +19,4 @@ services:
 networks:
   app-shared-network:
     driver: bridge
-    external: true
     name: app-shared-network
