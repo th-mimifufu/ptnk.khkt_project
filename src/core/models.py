@@ -31,20 +31,20 @@ class Admission(Base):
     __tablename__ = "admissions"
     __table_args__ = {'schema': 'uni_guide'}
     id = Column(Integer, primary_key=True, autoincrement=True)
-    major_code = Column(Integer)
-    admission_code = Column(String)
-    admission_type = Column(String)
-    admission_type_name = Column(String)
-    created_at = Column(String)
-    major_name = Column(String)
-    province = Column(String)
-    study_program = Column(String)
-    subject_combination = Column(String)
-    tuition_fee = Column(Integer)
     uni_code = Column(String)
     uni_name = Column(String)
-    uni_type = Column(Integer)
     uni_web_link = Column(String)
+    major_code = Column(String)
+    major_group = Column(Integer)
+    major_name = Column(String)
+    province = Column(String)
+    score = Column(Float)
+    tuition_fee = Column(Integer)
+    uni_type = Column(Integer)
+    study_program = Column(String)
+    admission_type = Column(String)
+    admission_type_name = Column(String)
+    admission_code = Column(String)
     updated_at = Column(String)
 
 
@@ -63,26 +63,26 @@ class Admission(Base):
 #     uni_type = Column(Integer)
 #     updated_at = Column(String)
 
-class L3Transcript(Base):
-    __tablename__ = "l3_transcript_new"
-    __table_args__ = {'schema': 'machine_learning'}
-    created_at = Column(String)
-    id = Column(Integer, primary_key=True)
-    uni_code = Column(String)
-    uni_name = Column(String)
-    uni_web_link = Column(String)
-    major_code = Column(String)
-    major_group = Column(Integer)
-    major_name = Column(String)
-    province = Column(String)
-    score = Column(Float)
-    tuition_fee = Column(Integer)
-    uni_type = Column(Integer)
-    study_program = Column(String)
-    admission_type = Column(String)
-    admission_type_name = Column(String)
-    admission_code = Column(String)
-    updated_at = Column(String)
+# class L3Transcript(Base):
+#     __tablename__ = "admissions"
+#     __table_args__ = {'schema': 'uni_guide'}
+#     created_at = Column(String)
+#     id = Column(Integer, primary_key=True)
+#     uni_code = Column(String)
+#     uni_name = Column(String)
+#     uni_web_link = Column(String)
+#     major_code = Column(String)
+#     major_group = Column(Integer)
+#     major_name = Column(String)
+#     province = Column(String)
+#     score = Column(Float)
+#     tuition_fee = Column(Integer)
+#     uni_type = Column(Integer)
+#     study_program = Column(String)
+#     admission_type = Column(String)
+#     admission_type_name = Column(String)
+#     admission_code = Column(String)
+#     updated_at = Column(String)
 
 class TranscriptSujectGroup(Base):
     __tablename__ = "transcript_subject_group"

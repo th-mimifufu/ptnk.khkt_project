@@ -162,11 +162,6 @@ def process_admission_calculation(db, user_input: UserInputL3, df_schools: pd.Da
         admission_code = row['admission_code']
         uni_name = row['uni_name']
         uni_type = row['uni_type']
-        if uni_type == 1:
-            uni_type = "Công lập"
-        else:
-            uni_type = "Tư thục"
-
         province = row['province']
         uni_web_name = row['uni_web_link']
         study_program = row['study_program']

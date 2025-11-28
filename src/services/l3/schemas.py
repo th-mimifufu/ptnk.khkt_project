@@ -195,6 +195,10 @@ class UserInputL3(BaseModel):
         if iv not in (0, 1):
             raise ValueError("cong_lap must be 0 or 1")
         return iv
+    
+    @property
+    def cong_lap_str(self) -> str:
+        return "Công lập" if self.cong_lap == 1 else "Tư thục"
 
 class UniversityResult(BaseModel):
     admission_code: str
