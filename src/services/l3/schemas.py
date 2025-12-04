@@ -1,3 +1,4 @@
+from uuid import UUID
 from pydantic import BaseModel, Field, create_model, field_validator, validator
 from typing import Dict, List, Literal, Optional, Set, ClassVar
 from enum import Enum
@@ -201,12 +202,13 @@ class UserInputL3(BaseModel):
         return "Công lập" if self.cong_lap == 1 else "Tư thục"
 
 class UniversityResult(BaseModel):
+    id: UUID
     admission_code: str
     uni_code: str
     uni_name: str
     uni_type: str       
     province: str
-    uni_web_name: str
+    uni_web_link: str
     
     study_program: str
     admission_type: str
