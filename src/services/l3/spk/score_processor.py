@@ -17,10 +17,10 @@ def process_admission_calculation(db, user_input: UserInputL3, df_schools: pd.Da
 
     to_hop_data = get_subject_combination(db, ma_nganh_list, uni_code)
     logger.debug(f"Retrieved subject combination data: {len(to_hop_data)} rows")
-    
     results = []
 
     for _, row in df_schools.iterrows():
+        id = row['id']
         ma_nganh = row['major_code']
         ten_nganh = row['major_name']
         diem_chuan = row['score']
@@ -29,7 +29,7 @@ def process_admission_calculation(db, user_input: UserInputL3, df_schools: pd.Da
         uni_name = row['uni_name']
         uni_type = row['uni_type']
         province = row['province']
-        uni_web_name = row['uni_web_link']
+        uni_web_link = row['uni_web_link']
         study_program = row['study_program']
         admission_type = row['admission_type']
         admission_type_name = row['admission_type_name']
@@ -53,12 +53,13 @@ def process_admission_calculation(db, user_input: UserInputL3, df_schools: pd.Da
         logger.info(f"Major {ma_nganh} -> Total score: {total_score}")
 
         result = {
+            'id': id,
             'admission_code': admission_code,
             'uni_code': uni_code,
             'uni_name': uni_name,
             'uni_type': uni_type,
             'province': province,
-            'uni_web_name': uni_web_name,
+            'uni_web_link': uni_web_link,
             'study_program': study_program,
             'admission_type': admission_type,
             'admission_type_name': admission_type_name,

@@ -20,3 +20,4 @@ networks:
   app-shared-network:
     driver: bridge
     name: app-shared-network
+    external: true
