@@ -1,0 +1,37 @@
+services:
+  ml-api-prod:
+    image: khanhlinh02/ml-service:latest
+    env_file:
+      - .env.prod
+    networks:
+      - app-shared-network-prod`
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: ingress
+
+networks:
+  app-shared-network-prod:
+    driver: overlay
+    external: true
+    name: app-shared-network-prod
