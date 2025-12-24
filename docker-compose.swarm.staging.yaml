@@ -28,7 +28,7 @@ services:
       - target: 8000
         published: 8002
         protocol: tcp
-        mode: ingress
+        mode: host
 
 networks:
   app-shared-network-staging:
