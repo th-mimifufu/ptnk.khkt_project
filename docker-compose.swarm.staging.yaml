@@ -4,7 +4,7 @@ services:
     env_file:
       - .env.staging
     networks:
-      - app-shared-network-staging
+      - backend-swarm-network-staging
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
       interval: 30s
@@ -31,7 +31,7 @@ services:
         mode: host
 
 networks:
-  app-shared-network-staging:
+  backend-swarm-network-staging:
     driver: overlay
     external: true
-    name: app-shared-network-staging
+    name: backend-swarm-network-staging
